@@ -31,7 +31,7 @@
   top: 0;
   bottom: 0;
   margin: auto;
-  z-index: 10000;
+  z-index: 1000;
   
 }
 .prev-slide {

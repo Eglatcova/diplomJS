@@ -884,6 +884,204 @@ const sliderGallery = () => {
   startSlide();
 };
 
+//11.рассчет стоимости клубной карты и
+//18.скидка
+const calcCards = () => {
+  const monthBtns = document.querySelectorAll(".time>input"),
+    inputClub = document.querySelectorAll("#cards .club>input"),
+    priceTotal = document.querySelector("#price-total"),
+    cardForm = document.querySelector("#card_order"),
+    promoSale = document.querySelector("#promo-sale");
+  let clubName = "mozaika",
+    clickButton = "1",
+    sale = false,
+    startPrice = priceTotal.innerHTML;
+
+  //поднять флаг(sale)
+  const onSale = () => {
+    if (promoSale.value === "ТЕЛО2020") {
+      startPrice = priceTotal.innerHTML;
+      priceTotal.innerHTML = Math.ceil(startPrice * 0.7);
+      sale = true;
+    }
+  };
+  //опустить флаг
+  const offSale = () => {
+    priceTotal.innerHTML = startPrice;
+    sale = false;
+  };
+
+  cardForm.addEventListener("click", (elem) => {
+    let target = event.target;
+    //искючение всех слушателей, кроме меню и его детей
+    if (
+      !target.closest("#card_leto_mozaika, #card_leto_schelkovo, .time>input")
+    ) {
+      return;
+    }
+    //изменение цены при клике на месяца и прередача месяца в перемнную clickButton
+    const changePrice = () => {
+      monthBtns.forEach((elem) => {
+        if (target === elem && clubName === "mozaika") {
+          switch (elem.value) {
+            case "1":
+              priceTotal.innerHTML = "2999";
+              clickButton = elem.value;
+              break;
+            case "6":
+              priceTotal.innerHTML = "9900";
+              clickButton = elem.value;
+              break;
+            case "9":
+              priceTotal.innerHTML = "13900";
+              clickButton = elem.value;
+              break;
+            case "12":
+              priceTotal.innerHTML = "19900";
+              clickButton = elem.value;
+              break;
+          }
+          onSale();
+        }
+        if (target === elem && clubName === "schelkovo") {
+          switch (elem.value) {
+            case "1":
+              priceTotal.innerHTML = "2999";
+              clickButton = elem.value;
+              break;
+            case "6":
+              priceTotal.innerHTML = "14990";
+              clickButton = elem.value;
+              break;
+            case "9":
+              priceTotal.innerHTML = "21990";
+              clickButton = elem.value;
+              break;
+            case "12":
+              priceTotal.innerHTML = "24990";
+              clickButton = elem.value;
+              break;
+          }
+          onSale();
+        }
+      });
+    };
+    //изменение цены при клике на клубы и передача клуба в переменную clubName
+    const changeClub = () => {
+      inputClub.forEach((elem) => {
+        if (target.closest("#card_leto_mozaika")) {
+          clubName = "mozaika";
+          switch (clickButton) {
+            case "1":
+              priceTotal.innerHTML = "2999";
+              break;
+            case "6":
+              priceTotal.innerHTML = "9900";
+              break;
+            case "9":
+              priceTotal.innerHTML = "13900";
+              break;
+            case "12":
+              priceTotal.innerHTML = "19900";
+              break;
+          }
+          onSale();
+        }
+        if (target.closest("#card_leto_schelkovo")) {
+          clubName = "schelkovo";
+          switch (clickButton) {
+            case "1":
+              priceTotal.innerHTML = "2999";
+              break;
+            case "6":
+              priceTotal.innerHTML = "14990";
+              break;
+            case "9":
+              priceTotal.innerHTML = "21990";
+              break;
+            case "12":
+              priceTotal.innerHTML = "24990";
+              break;
+          }
+          onSale();
+        }
+      });
+    };
+
+    if (target.closest(".time>input")) {
+      changePrice();
+    }
+
+    if (target.closest("#card_leto_mozaika, #card_leto_schelkovo")) {
+      changeClub();
+    }
+  });
+
+  promoSale.addEventListener("input", () => {
+    if (promoSale.value === "ТЕЛО2020" && !sale) {
+      onSale();
+    } else if (sale) {
+      offSale();
+    }
+  });
+};
+
+//14, 15, 16 бургер-меню
+const burgerMenuToggle = () => {
+  const popupMenu = document.querySelector(".popup-menu"),
+    head = document.querySelector(".head"),
+    topMenu = document.querySelector(".top-menu");
+
+  const addElem = (elem) => {
+    elem.style.display = "flex";
+  };
+
+  const removeElem = (elem) => {
+    elem.style.display = "none";
+  };
+  //фиксация меню на опеределенной высоте скролла
+  window.addEventListener("scroll", () => {
+    if (window.pageYOffset > head.clientHeight) {
+      topMenu.style = "position: fixed";
+      document.body.style.marginTop = topMenu.clientHeight + "px";
+    } else {
+      topMenu.style = "position: static";
+      document.body.style.marginTop = 0 + "px";
+    }
+  });
+
+  document.addEventListener("click", () => {
+    let target = event.target;
+    //искючение всех слушателей, кроме меню и его детей
+    if (!target.closest(".menu-button, .close-menu-btn, a")) {
+      return;
+    }
+    if (target.closest(".menu-button")) {
+      addElem(popupMenu);
+    }
+    if (target.closest(".close-menu-btn")) {
+      removeElem(popupMenu);
+    }
+    if (target.closest("a")) {
+      removeElem(popupMenu);
+    }
+  });
+  // console.log(topMenu);
+};
+
+//17 стрелка вверх
+const scrollUp = () => {
+  const arrowUp = document.querySelector("#totop"),
+    mainHeader = document.querySelector(".header-main");
+  window.addEventListener("scroll", () => {
+    if (window.pageYOffset > mainHeader.clientHeight) {
+      arrowUp.style = "display: inline-block";
+    } else {
+      arrowUp.style = "display: none";
+    }
+  });
+};
+
 selectClub();
 popUpVisitToggle();
 popUpCallbackToggle();
@@ -898,3 +1096,6 @@ popUpGiftToggle();
 
 mainSlider();
 sliderGallery();
+calcCards();
+burgerMenuToggle();
+scrollUp();
