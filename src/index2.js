@@ -14,10 +14,8 @@ import sendFormFooter from "./modules/sendFormFooter";
 import sendFormCallback from "./modules/sendFormCallback";
 import sendFormVisit from "./modules/sendFormVisit";
 
-import popUpGiftToggle from "./modules/popUpGiftToggle";
 import mainSlider from "./modules/mainSlider";
 import sliderGallery from "./modules/sliderGallery";
-import calcCards from "./modules/calcCards";
 import burgerMenuToggle from "./modules/burgerMenuToggle";
 import scrollUp from "./modules/scrollUp";
 
@@ -37,10 +35,10 @@ sendFormFooter();
 sendFormCallback();
 sendFormVisit();
 
-popUpGiftToggle();
+
 mainSlider();
 sliderGallery();
-calcCards();
+
 burgerMenuToggle();
 scrollUp();
 sliderCarouselServicesFu();

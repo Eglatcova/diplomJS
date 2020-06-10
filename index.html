@@ -230,7 +230,7 @@
               required
               placeholder="Ваш номер телефона..."
             />
-            <button name="send" class="btn" type="submit">Записаться</button>
+            <button name="send" class="btn btn__bunner" type="submit">Записаться</button>
             <p class="personal-data">
               <input type="checkbox" required id="check1" /><label for="check1"
                 >Я согласен на обработку персональных данных</label
@@ -718,32 +718,8 @@
         </div>
       </div>
     </div>
-    <script src="script.js"></script>
+    <script src="dist/main.js"></script>
 
-    <script>
-      const carousel = new sliderCarouselServices({
-        main: ".services-slider",
-        wrap: "#services .wrapper",
-        slides: ".services-slider>.slide",
-        next: ".services__navigation-left",
-        prev: ".services__navigation-right",
-        slidesToShow: 5,
-        responsive: [
-          {
-            breakpoint: 1024,
-            slidesToShow: 4,
-          },
-          {
-            breakpoint: 768,
-            slidesToShow: 3,
-          },
-          {
-            breakpoint: 576,
-            slidesToShow: 2,
-          },
-        ],
-      });
-      carousel.init();
-    </script>
+   
   </body>
 </html>
