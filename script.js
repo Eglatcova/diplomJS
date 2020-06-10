@@ -1,25 +1,22 @@
 "use strict";
 //2.выбор клуба
 const selectClub = () => {
-  const buttonClubs = document.querySelector(".clubs-list"),
+  const buttonClubs = document.querySelector(".club-select"),
     clubsUl = document.querySelector(".clubs-list ul");
 
-  const addElem = (elem) => {
-    elem.style.display = "block";
+  const toggleElem = (elem) => {
+    elem.classList.toggle("ul-club-select");
   };
 
-  const removeElem = (elem) => {
-    elem.style.display = "none";
-  };
-
-  buttonClubs.addEventListener("click", () => {
-    addElem(clubsUl);
-  });
   document.addEventListener("click", () => {
     let target = event.target;
+    if (target.closest(".p-club-select")) {
+      toggleElem(clubsUl);
+    }
+
     target = target.closest(".clubs-list");
     if (target === null) {
-      removeElem(clubsUl);
+      toggleElem(clubsUl);
     }
   });
 };
@@ -78,7 +75,8 @@ const popUpCallbackToggle = () => {
 };
 
 //5.отправка посредством ajax и валидация
-//баннер
+
+//8 баннер
 const sendFormBanner = () => {
   const errorMessage = "Что то пошло не так",
     loadMessage = "Загрузка...",
@@ -86,11 +84,17 @@ const sendFormBanner = () => {
 
   const bannerContent = document.querySelector("#banner .wrapper"),
     form = document.querySelector("#banner-form"),
-    formName = document.querySelector("#name-banner-form");
+    formName = document.querySelector("#name-banner-form"),
+    modalThanks = document.querySelector("#thanks"),
+    popUpThanks = modalThanks.querySelector("p");
 
   //сообщение-статус
   const statusMessage = document.createElement("div");
   statusMessage.style.cssText = "font-size: 2rem";
+
+  const addElem = (elem) => {
+    elem.style.display = "block";
+  };
 
   //валидация имени
   formName.addEventListener("input", () => {
@@ -143,7 +147,6 @@ const sendFormBanner = () => {
   }
 
   // use
-
   maskPhone("#phone-banner-form", "+7 (___) ___-__-__");
 
   form.addEventListener("submit", (event) => {
@@ -171,12 +174,16 @@ const sendFormBanner = () => {
         if (response.status !== 200) {
           throw new Error("status network not 200");
         }
+        addElem(modalThanks);
         bannerContent.innerHTML = successMessage;
         bannerContent.style.cssText = "font-size: 2rem";
       })
       .catch((error) => {
-        bannerContent.innerHTML = errorMessage;
-        bannerContent.style.cssText = "font-size: 2rem";
+        popUpThanks.innerHTML = errorMessage;
+        popUpThanks.style.cssText =
+          "font-size: 1.6rem; color: white; padding-bottom: 2rem";
+        addElem(modalThanks);
+        statusMessage.textContent = errorMessage;
         console.error(error);
       });
   });
@@ -261,7 +268,6 @@ const sendFormCard = () => {
     formData.forEach((val, key) => {
       body[key] = val;
     });
-
     const postData = (body) => {
       return fetch("./server.php", {
         method: "POST",
@@ -286,11 +292,13 @@ const sendFormCard = () => {
   });
 };
 
-//форма в футере
+//12 форма в футере
 const sendFormFooter = () => {
   const errorMessage = "Что то пошло не так",
     loadMessage = "Загрузка...",
-    successMessage = "Спасибо! Мы скоро с вами свяжемся!";
+    successMessage = "Спасибо! Мы скоро с вами свяжемся!",
+    modalThanks = document.querySelector("#thanks"),
+    popUpThanks = modalThanks.querySelector("p");
 
   const bannerContent = document.querySelector("#footer .right"),
     form = document.querySelector("#footer_form");
@@ -299,9 +307,13 @@ const sendFormFooter = () => {
   const statusMessage = document.createElement("div");
   statusMessage.style.cssText = "font-size: 1.6rem";
 
+  const addElem = (elem) => {
+    elem.style.display = "block";
+  };
+
   //божественная маска
 
-  function maskPhone(selector, masked = "+7 (___) ___-__-__") {
+  const maskPhone = (selector, masked = "+7 (___) ___-__-__") => {
     const elems = document.querySelectorAll(selector);
 
     function mask(event) {
@@ -342,12 +354,12 @@ const sendFormFooter = () => {
       elem.addEventListener("focus", mask);
       elem.addEventListener("blur", mask);
     }
-  }
+  };
 
   // use
-
   maskPhone("#callback_footer_form-phone", "+7 (___) ___-__-__");
 
+  //события формы
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     form.append(statusMessage);
@@ -359,7 +371,6 @@ const sendFormFooter = () => {
     formData.forEach((val, key) => {
       body[key] = val;
     });
-
     const postData = (body) => {
       return fetch("./server.php", {
         method: "POST",
@@ -373,15 +384,21 @@ const sendFormFooter = () => {
         if (response.status !== 200) {
           throw new Error("status network not 200");
         }
+        addElem(modalThanks);
         bannerContent.innerHTML = successMessage;
         bannerContent.style.cssText = "font-size: 1.6rem";
       })
       .catch((error) => {
-        bannerContent.innerHTML = errorMessage;
-        bannerContent.style.cssText = "font-size: 1.6rem";
+        popUpThanks.innerHTML = errorMessage;
+        popUpThanks.style.cssText =
+          "font-size: 1.6rem; color: white; padding-bottom: 2rem";
+        addElem(modalThanks);
+        statusMessage.textContent = errorMessage;
         console.error(error);
       });
   });
+
+  //события всплывающего окна
 };
 
 //callback-form
@@ -895,19 +912,21 @@ const calcCards = () => {
   let clubName = "mozaika",
     clickButton = "1",
     sale = false,
-    startPrice = priceTotal.innerHTML;
-
+    price = "2999",
+    //хранение цены
+    startPrice;
+    
   //поднять флаг(sale)
   const onSale = () => {
     if (promoSale.value === "ТЕЛО2020") {
-      startPrice = priceTotal.innerHTML;
+      startPrice = price;
       priceTotal.innerHTML = Math.ceil(startPrice * 0.7);
       sale = true;
     }
   };
   //опустить флаг
   const offSale = () => {
-    priceTotal.innerHTML = startPrice;
+    priceTotal.innerHTML = price;
     sale = false;
   };
 
@@ -919,101 +938,52 @@ const calcCards = () => {
     ) {
       return;
     }
-    //изменение цены при клике на месяца и прередача месяца в перемнную clickButton
-    const changePrice = () => {
-      monthBtns.forEach((elem) => {
-        if (target === elem && clubName === "mozaika") {
-          switch (elem.value) {
-            case "1":
-              priceTotal.innerHTML = "2999";
-              clickButton = elem.value;
-              break;
-            case "6":
-              priceTotal.innerHTML = "9900";
-              clickButton = elem.value;
-              break;
-            case "9":
-              priceTotal.innerHTML = "13900";
-              clickButton = elem.value;
-              break;
-            case "12":
-              priceTotal.innerHTML = "19900";
-              clickButton = elem.value;
-              break;
-          }
-          onSale();
-        }
-        if (target === elem && clubName === "schelkovo") {
-          switch (elem.value) {
-            case "1":
-              priceTotal.innerHTML = "2999";
-              clickButton = elem.value;
-              break;
-            case "6":
-              priceTotal.innerHTML = "14990";
-              clickButton = elem.value;
-              break;
-            case "9":
-              priceTotal.innerHTML = "21990";
-              clickButton = elem.value;
-              break;
-            case "12":
-              priceTotal.innerHTML = "24990";
-              clickButton = elem.value;
-              break;
-          }
-          onSale();
-        }
-      });
-    };
-    //изменение цены при клике на клубы и передача клуба в переменную clubName
-    const changeClub = () => {
-      inputClub.forEach((elem) => {
-        if (target.closest("#card_leto_mozaika")) {
-          clubName = "mozaika";
-          switch (clickButton) {
-            case "1":
-              priceTotal.innerHTML = "2999";
-              break;
-            case "6":
-              priceTotal.innerHTML = "9900";
-              break;
-            case "9":
-              priceTotal.innerHTML = "13900";
-              break;
-            case "12":
-              priceTotal.innerHTML = "19900";
-              break;
-          }
-          onSale();
-        }
-        if (target.closest("#card_leto_schelkovo")) {
-          clubName = "schelkovo";
-          switch (clickButton) {
-            case "1":
-              priceTotal.innerHTML = "2999";
-              break;
-            case "6":
-              priceTotal.innerHTML = "14990";
-              break;
-            case "9":
-              priceTotal.innerHTML = "21990";
-              break;
-            case "12":
-              priceTotal.innerHTML = "24990";
-              break;
-          }
-          onSale();
-        }
-      });
-    };
 
-    if (target.closest(".time>input")) {
-      changePrice();
-    }
+    monthBtns.forEach((elem) => {
+      if (elem.checked) {
+        clickButton = elem.value;
+      }
+    });
+    inputClub.forEach((elem) => {
+      if (elem.checked) {
+        clubName = elem.value;
+      }
+    });
 
-    if (target.closest("#card_leto_mozaika, #card_leto_schelkovo")) {
-      changeClub();
+    if (clubName === "mozaika") {
+      switch (clickButton) {
+        case "1":
+          priceTotal.innerHTML = "2999";
+          break;
+        case "6":
+          priceTotal.innerHTML = "9900";
+          break;
+        case "9":
+          priceTotal.innerHTML = "13900";
+          break;
+        case "12":
+          priceTotal.innerHTML = "19900";
+          break;
+      }
+      price = priceTotal.innerHTML;
+      onSale();
+    } else if (clubName === "schelkovo") {
+      switch (clickButton) {
+        case "1":
+          priceTotal.innerHTML = "2999";
+          break;
+        case "6":
+          priceTotal.innerHTML = "14990";
+          break;
+        case "9":
+          priceTotal.innerHTML = "21990";
+          break;
+        case "12":
+          priceTotal.innerHTML = "24990";
+          break;
+      }
+      price = priceTotal.innerHTML;
+      onSale();
     }
   });
 
@@ -1073,11 +1043,114 @@ const burgerMenuToggle = () => {
 const scrollUp = () => {
   const arrowUp = document.querySelector("#totop"),
     mainHeader = document.querySelector(".header-main");
+
+  //плавный скролл!!!
+  const scrollUp = () => {
+    window.scrollBy(0, -100); // чем меньше значение (цифра -10), тем меньше скорость перемещения
+    if (window.pageYOffset > 0) {
+      requestAnimationFrame(scrollUp);
+    } // если значение прокрутки больше нуля, то функция повториться
+  };
+
+  const addElem = (elem) => {
+    elem.style.display = "inline-block";
+  };
+
+  const removeElem = (elem) => {
+    elem.style.display = "none";
+  };
+
+  removeElem(arrowUp);
+
   window.addEventListener("scroll", () => {
     if (window.pageYOffset > mainHeader.clientHeight) {
-      arrowUp.style = "display: inline-block";
+      addElem(arrowUp);
     } else {
-      arrowUp.style = "display: none";
+      removeElem(arrowUp);
+    }
+  });
+
+  arrowUp.addEventListener("click", function (e) {
+    e.preventDefault(); // запрет перехода по ссылке, вместо него скрипт
+    scrollUp();
+  });
+};
+
+//--удаление окна thanks(вызов в тех формах, шде необходимо)
+const thanksRemove = () => {
+  const modalThanks = document.querySelector("#thanks");
+
+  const removeElem = (elem) => {
+    elem.style.display = "none";
+  };
+
+  modalThanks.addEventListener("click", (event) => {
+    let target = event.target;
+    if (target.closest(".close-form, .close-btn")) {
+      removeElem(modalThanks);
+    }
+  });
+};
+
+//--валидация всех чекбоксов
+const checkboxESValide = () => {
+  //чекбокс1(баннер)
+  const form1 = document.querySelector("#banner-form"),
+    label1 = form1.querySelector(".personal-data label"),
+    checkForm1 = document.querySelector("#check1");
+  //чекбокс2(клубные карты)
+  const form2 = document.querySelector("#card_order"),
+    label2 = form2.querySelector(".personal-data label"),
+    checkForm2 = document.querySelector("#check1");
+
+  //контейнер для текста ошибки
+  let errorText = document.createElement("p");
+  errorText.classList.add("error-text1");
+  errorText.style =
+    "color: red; text-align: center; left: 0; right:0; top: 1.5rem; margin: auto; position: absolute";
+
+  //показать текст ошибки
+
+  const errorTextAdd = (label, checkbox) => {
+    if (!checkbox.checked) {
+      label.append(errorText);
+      errorText.textContent = "Подтвердите согласие!";
+    }
+  };
+
+  //убрать текст ошибки
+
+  const clearTextError = (checkbox) => {
+    if (checkbox.checked) {
+      errorText.textContent = "";
+    }
+  };
+
+  document.addEventListener("click", () => {
+    let target = event.target;
+    if (!target.closest("#banner-form, #card_order")) {
+      return;
+    }
+    //валидация чекбокса1(баннер)
+    if (target.closest("#banner-form")) {
+      if (target.closest("button")) {
+        errorTextAdd(label1, checkForm1);
+      }
+
+      if (target.closest("#check1")) {
+        clearTextError(checkForm1);
+      }
+    }
+
+    //валидация чекбокса2(клубные карты)
+    if (target.closest("#card_order")) {
+      if (target.closest("button")) {
+        errorTextAdd(label2, checkForm2);
+      }
+
+      if (target.closest("#card_check")) {
+        clearTextError(checkForm2);
+      }
     }
   });
 };
@@ -1085,6 +1158,9 @@ const scrollUp = () => {
 selectClub();
 popUpVisitToggle();
 popUpCallbackToggle();
+
+thanksRemove();
+checkboxESValide();
 
 sendFormBanner();
 sendFormCard();
