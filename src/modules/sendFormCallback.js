@@ -8,8 +8,7 @@ const sendFormCallback = () => {
 
   const bannerContent = document.querySelector("#callback_form #form1"),
     form = document.querySelector("#form1"),
-    formName = document.querySelector("#name-card-form");
-
+    formName = form.querySelector("#name-callback-form");
   //сообщение-статус
   const statusMessage = document.createElement("div");
   statusMessage.style.cssText = "font-size: 1.7rem; color: white";
@@ -59,7 +58,8 @@ const sendFormCallback = () => {
         console.error(error);
       });
   });
-};
 
+ 
+};
 
 export default sendFormCallback;

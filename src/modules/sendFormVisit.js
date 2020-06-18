@@ -8,7 +8,7 @@ const sendFormVisit = () => {
 
   const bannerContent = document.querySelector("#free_visit_form #form2"),
     form = document.querySelector("#form2"),
-    formName = document.querySelector("#name-card-form");
+    formName = document.querySelector("#name-visit-form");
   //сообщение-статус
   const statusMessage = document.createElement("div");
   statusMessage.style.cssText = "font-size: 1.7rem; color: white";
